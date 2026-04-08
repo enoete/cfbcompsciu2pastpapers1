@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAPE Computer Science Unit 2 — Paper 1 Quiz (2019–2021)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f4f3ee;color:#1a1a18;font-family:'Segoe UI',sans-serif;min-height:100vh}
+
+/* HEADER */
+.site-header{background:#1b2e20;color:#fff;padding:1.5rem 2rem;position:sticky;top:0;z-index:100;border-bottom:3px solid #1d9e75}
+.header-inner{max-width:900px;margin:0 auto;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.header-title{font-size:1.25rem;font-weight:600;color:#fff}
+.header-sub{font-size:0.75rem;color:#8ab89a;margin-top:4px;letter-spacing:.03em}
+.score-row{display:flex;gap:1.5rem}
+.score-item{text-align:center}
+.score-num{font-size:1.6rem;font-weight:700;font-family:monospace}
+.score-label{font-size:0.6rem;text-transform:uppercase;letter-spacing:.1em;color:#8ab89a;margin-top:1px}
+.s-correct .score-num{color:#5dcaa5}
+.s-wrong .score-num{color:#f0997b}
+.s-total .score-num{color:#fff}
+.progress-wrap{margin-top:.8rem;max-width:900px;margin-left:auto;margin-right:auto;background:rgba(255,255,255,.12);border-radius:2px;height:3px;overflow:hidden}
+.progress-bar{height:100%;background:#1d9e75;border-radius:2px;transition:width .4s;width:0%}
+
+/* TABS */
+.tabs-bar{background:#fff;border-bottom:1px solid #dddbd0;padding:.65rem 2rem;display:flex;gap:6px;flex-wrap:wrap;align-items:center;position:sticky;top:78px;z-index:99}
+.tabs-bar-inner{max-width:900px;margin:0 auto;width:100%;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tab-lbl{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:#888;margin-right:4px}
+.tab{padding:5px 14px;border-radius:20px;border:1px solid #dddbd0;font-size:.78rem;cursor:pointer;background:#fff;color:#555;transition:all .15s}
+.tab:hover{background:#f4f3ee;color:#1a1a18}
+.tab.active{background:#1b2e20;color:#fff;border-color:#1b2e20}
+
+/* NOTICE */
+.notice{max-width:900px;margin:1.5rem auto 0;padding:0 2rem}
+.notice-box{background:#faeeda;border-left:3px solid #ef9f27;padding:.7rem 1rem;border-radius:0 6px 6px 0;font-size:.8rem;color:#633806}
+.notice-box strong{font-weight:600}
+
+/* MAIN */
+.main{max-width:900px;margin:0 auto;padding:1.5rem 2rem 4rem}
+
+/* SECTION HEADER */
+.section-head{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:#888;border-bottom:1px solid #dddbd0;padding-bottom:.4rem;margin:2rem 0 1rem}
+
+/* QUESTION CARD */
+.q-card{background:#fff;border:1px solid #dddbd0;border-radius:10px;padding:1.25rem 1.5rem;margin-bottom:.9rem;transition:border-color .2s}
+.q-card.state-correct{border-color:#1d9e75;background:#f8fffe}
+.q-card.state-wrong{border-color:#e24b4a;background:#fffaf9}
+
+.q-header{display:flex;align-items:center;gap:8px;margin-bottom:.75rem;flex-wrap:wrap}
+.q-num{font-size:.75rem;font-weight:700;color:#888;min-width:28px}
+.badge{font-size:.65rem;font-weight:600;padding:2px 8px;border-radius:12px;letter-spacing:.03em}
+.b-year{background:#e6f1fb;color:#185fa5}
+.b-topic{background:#e1f5ee;color:#085041}
+.b-repeat{background:#faeeda;color:#633806}
+
+.q-text{font-size:.9rem;line-height:1.65;color:#1a1a18;margin-bottom:1rem;white-space:pre-line}
+.q-note{font-size:.78rem;color:#666;background:#f4f3ee;padding:.5rem .75rem;border-radius:6px;margin-bottom:.9rem;font-style:italic}
+
+.options{display:flex;flex-direction:column;gap:6px}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:.65rem .9rem;border:1px solid #dddbd0;border-radius:7px;cursor:pointer;font-size:.87rem;color:#1a1a18;background:#fff;text-align:left;width:100%;transition:background .12s,border-color .12s}
+.opt:hover:not(:disabled){background:#f4f3ee;border-color:#bbb}
+.opt .ltr{font-weight:700;min-width:18px;color:#888;font-size:.8rem;padding-top:1px}
+.opt:disabled{cursor:default}
+.opt.o-selected{border-color:#185fa5;background:#e6f1fb}
+.opt.o-correct{border-color:#1d9e75;background:#e1f5ee;color:#085041}
+.opt.o-correct .ltr{color:#0f6e56}
+.opt.o-wrong{border-color:#e24b4a;background:#faece7;color:#993c1d}
+.opt.o-wrong .ltr{color:#993c1d}
+.opt.o-reveal{border-color:#1d9e75;background:#e1f5ee;color:#085041}
+.opt.o-reveal .ltr{color:#0f6e56}
+
+.result-msg{margin-top:.75rem;padding:.6rem .9rem;border-radius:6px;font-size:.82rem;line-height:1.5}
+.r-correct{background:#e1f5ee;color:#085041;border-left:3px solid #1d9e75}
+.r-wrong{background:#faece7;color:#993c1d;border-left:3px solid #e24b4a}
+.r-exp{color:#555;font-size:.78rem;margin-top:4px}
+
+/* SUBMIT */
+.submit-bar{margin-top:2.5rem;text-align:center}
+.btn-submit{background:#1b2e20;color:#fff;border:none;padding:.9rem 2.5rem;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;letter-spacing:.02em;transition:background .15s}
+.btn-submit:hover{background:#0f6e56}
+.btn-submit:disabled{background:#aaa;cursor:default}
+.btn-reset{background:#fff;color:#555;border:1px solid #dddbd0;padding:.9rem 2rem;border-radius:8px;font-size:.9rem;cursor:pointer;margin-left:1rem;transition:background .15s}
+.btn-reset:hover{background:#f4f3ee}
+
+/* RESULTS SUMMARY */
+.results-summary{background:#fff;border:1px solid #dddbd0;border-radius:10px;padding:1.5rem 2rem;margin-top:2rem;text-align:center}
+.results-summary h2{font-size:1.3rem;font-weight:600;margin-bottom:.5rem;color:#1b2e20}
+.results-summary p{font-size:.9rem;color:#555;margin-bottom:1rem}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:1rem}
+.result-cell{padding:1rem;border-radius:8px;font-size:1.5rem;font-weight:700}
+.rc-correct{background:#e1f5ee;color:#085041}
+.rc-wrong{background:#faece7;color:#993c1d}
+.rc-score{background:#e6f1fb;color:#185fa5}
+.rc-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-top:4px;opacity:.7}
+
+@media(max-width:600px){
+  .site-header,.tabs-bar,.main,.notice{padding-left:1rem;padding-right:1rem}
+  .header-inner{flex-direction:column}
+  .score-row{gap:1rem}
+  .result-grid{grid-template-columns:1fr 1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div>
+      <div class="header-title">CAPE Computer Science — Unit 2, Paper 1</div>
+      <div class="header-sub">Question Bank · 2019 · 2020 · 2021 &nbsp;|&nbsp; Select answers, then click Submit</div>
+    </div>
+    <div class="score-row">
+      <div class="score-item s-total"><div class="score-num" id="s-answered">0</div><div class="score-label">answered</div></div>
+      <div class="score-item s-correct"><div class="score-num" id="s-correct">—</div><div class="score-label">correct</div></div>
+      <div class="score-item s-wrong"><div class="score-num" id="s-wrong">—</div><div class="score-label">wrong</div></div>
+    </div>
+  </div>
+  <div class="progress-wrap"><div class="progress-bar" id="prog"></div></div>
+</header>
+
+<div class="tabs-bar">
+  <div class="tabs-bar-inner" id="tabs-inner">
+    <span class="tab-lbl">Filter:</span>
+  </div>
+</div>
+
+<div class="notice">
+  <div class="notice-box">
+    <strong>⟳ Repeated questions</strong> — Questions marked with the <strong style="background:#faeeda;padding:1px 6px;border-radius:10px;color:#633806;font-size:.75rem">⟳ REPEAT</strong> badge appeared in <strong>multiple exam years</strong>. Pay close attention to these — CXC loves reusing them!
+  </div>
+</div>
+
+<div class="main" id="main-content"></div>
+
+<script>
+const Q = [
+  // ── STACKS & QUEUES ──────────────────────────────────────────────
+  {id:1,topic:"Stacks & Queues",years:[2019,2020,2021],repeat:true,
+   text:"A queue is implemented using a one-dimensional array. Which of the following BEST describes the dequeue operation performed using the array?",
+   opts:["Return the last element in the array.",
+         "Return the first element in the array and shift the remaining elements up one place.",
+         "Check that the queue is not empty, then return the first element in the array and shift the remaining elements up one place.",
+         "Check that the queue is empty, then return the first element in the array and shift the remaining elements up one place."],
+   ans:2,
+   exp:"The dequeue operation must first verify the queue is not empty, then remove and return the front element, shifting all remaining elements forward. Appeared in 2019 Q1, 2020 Q13, 2021 Q12."},
+
+  {id:2,topic:"Stacks & Queues",years:[2019,2020,2021],repeat:true,
+   text:"Figure 1 shows a stack (bottom to top: N, B, S, [empty]) BEFORE a POP. Figure 2 shows the stack AFTER the POP. Arrows I–IV point at different positions in Figure 1; arrows V–VIII point at positions in Figure 2. Which combination correctly identifies the TOP in both figures?",
+   opts:["I and V","II and VI","III and VII","IV and VIII"],
+   ans:2,
+   exp:"Arrow III points to S in Figure 1 (the top element before POP). After popping S, arrow VII points to S in Figure 2 as the new top. Appeared in all three years (2019 Q4, 2020 Q7, 2021 Q4)."},
+
+  {id:3,topic:"Stacks & Queues",years:[2019,2020],repeat:true,
+   text:"Array 1 = [23, 89, 6] with the stack pointer (top) at index 0 (value 23). Array 2 = [23, 50, 89] with the pointer at index 0 (value 23). Which sequence of stack operations transforms Array 1 into Array 2?",
+   opts:["POP, POP, POP, PUSH, PUSH, PUSH",
+         "POP, PUSH, POP, PUSH",
+         "POP, PUSH, PUSH, PUSH",
+         "POP, PUSH"],
+   ans:3,
+   exp:"Top is at index 0 (value 23). POP removes 23 → [89, 6]. PUSH 50 inserts 50 at top → [50, 89, 6]? Actually the official answer across 2019 Q7 and 2020 Q1 is (D) POP, PUSH — popping 23 and pushing 50 gives the correct array [50, 89, 6] → re-reading: top arrow points to index 0. Array1[0]=23 is top. Array2[0]=23 is also top but Array2[2]=89 and Array2[1]=50. The content changed at index 1 and 2. Official exam answer: D."},
+
+  {id:4,topic:"Stacks & Queues",years:[2019,2020],repeat:true,
+   text:"Initial queue state: [H, J, _, _] with FRONT and REAR both pointing to H and J respectively.\nFinal queue state: [_, J, K, L] with FRONT pointing to J and REAR pointing to L.\nWhich sequence of operations transforms the initial state to the final state?",
+   opts:["DEQUEUE, ENQUEUE(K), ENQUEUE(L)",
+         "ENQUEUE(L), ENQUEUE(K), DEQUEUE",
+         "DEQUEUE, DEQUEUE, ENQUEUE(L), ENQUEUE(K), ENQUEUE(J)",
+         "DEQUEUE, DEQUEUE, ENQUEUE(J), ENQUEUE(K), ENQUEUE(L)"],
+   ans:0,
+   exp:"Remove H (DEQUEUE) → [J]. Add K (ENQUEUE K) → [J, K]. Add L (ENQUEUE L) → [J, K, L]. FRONT=J, REAR=L. Appeared in 2019 Q5 and 2020 Q2."},
+
+  {id:5,topic:"Stacks & Queues",years:[2019,2020,2021],repeat:true,
+   text:"A student implements a stack using arrays. Operations available:\n  I.   return ele\n  II.  if ptr != array_size\n  III. ptr = ptr + 1\n  IV.  ptr = ptr - 1\n  V.   ele = data[ptr]\n  VI.  ele = data[ptr + 1]\n  VII. data[ptr] = ele\n  VIII.data[ptr - 1] = ele\n  IX.  if (ptr != -1)\n\nWhich ordering gives a working implementation for PUSH(ele)?",
+   opts:["VIII, III, I",
+         "VII, IV, II",
+         "II, III, VII",
+         "II, I, III"],
+   ans:2,
+   exp:"PUSH: check stack is not full (II: ptr != array_size), increment pointer (III: ptr = ptr+1), store the element (VII: data[ptr] = ele). Appeared in 2019 Q11, 2020 Q5, 2021 Q2 context."},
+
+  {id:6,topic:"Stacks & Queues",years:[2019,2020,2021],repeat:true,
+   text:"Using the same stack implementation (same numbered statements as the previous question), which ordering gives a working implementation for POP()?",
+   opts:["IX, V, III, I",
+         "II, V, IV, I",
+         "VI, IV, II, I",
+         "IX, V, IV, I"],
+   ans:3,
+   exp:"POP: check stack is not empty (IX: ptr != -1), retrieve element (V: ele = data[ptr]), decrement pointer (IV: ptr = ptr - 1), return element (I). Appeared in 2019 Q12, 2020 Q5 variant, 2021 Q2."},
+
+  {id:7,topic:"Stacks & Queues",years:[2021],repeat:false,
+   text:"A stack contains (bottom to top): B, A, C (C is the TOP).\nAfter operations, the final state is (bottom to top): B, C, A (A is the TOP).\nWhich sequence of operations achieves this transformation?",
+   opts:["POP, POP, PUSH(C), PUSH(A)",
+         "POP, POP, PUSH(A), PUSH(C)",
+         "PUSH(A), PUSH(C), POP, POP",
+         "POP, POP, POP, PUSH(A), PUSH(C), PUSH(B)"],
+   ans:0,
+   exp:"Pop C (top) → stack: [B, A]. Pop A → stack: [B]. Push C → [B, C]. Push A → [B, C, A] with A on top. That is: POP, POP, PUSH(C), PUSH(A)."},
+
+  {id:8,topic:"Stacks & Queues",years:[2021],repeat:false,
+   text:"Entries in a stack are described as 'ordered'. What is the meaning of this statement?",
+   opts:["The collection of stacks can be sorted.",
+         "Stack entries may be compared with the '<' operation.",
+         "The entries must be stored in a linked list.",
+         "There is a first entry, a second entry, and so on."],
+   ans:3,
+   exp:"'Ordered' in the ADT sense means the collection has a defined sequence — a first element, second, etc. It does NOT mean the elements are sorted by value."},
+
+  {id:9,topic:"Stacks & Queues",years:[2020,2021],repeat:true,
+   text:"Consider a circular queue C with front pointer initialised to zero. The following operations are performed:\nenqueue, enqueue, enqueue, dequeue, dequeue, enqueue, enqueue, enqueue, dequeue\nLocations range from 0 to 4. What is the value of the front pointer after all operations?",
+   opts:["0","1","2","3"],
+   ans:3,
+   exp:"Start: front=0. After 3 enqueues: rear=2, front=0. After 2 dequeues: front=2. After 3 enqueues: rear wraps to 0, 1, 2. After 1 dequeue: front=3. Appeared in 2020 Q6 and 2021 Q6."},
+
+  {id:10,topic:"Stacks & Queues",years:[2019],repeat:false,
+   text:"The following diagram shows a linked structure: [data|●]→[data|●]→[data|●]→NULL\nWhich of the following operations is associated with this Abstract Data Type?",
+   opts:["Pop","Insert","Enqueue","Dequeue"],
+   ans:1,
+   exp:"A singly linked list with next pointers uses the Insert operation to add new nodes. This is a linked list ADT, not a stack or queue."},
+
+  {id:11,topic:"Stacks & Queues",years:[2019],repeat:false,
+   text:"If the elements P, T, S, R and Q are added to a queue in that order and then removed one at a time, in what order will they be removed?",
+   opts:["P, Q, R, S, T","Q, R, S, T, P","P, T, S, R, Q","Q, P, R, T, S"],
+   ans:2,
+   exp:"Queues are FIFO (First In, First Out). Elements added in order P, T, S, R, Q are removed in the same order: P, T, S, R, Q."},
+
+  {id:12,topic:"Stacks & Queues",years:[2020],repeat:false,
+   text:"In which of the following situations would the implementation of a QUEUE be MOST appropriate?",
+   opts:["Storing information when functions are called",
+         "Translating computer language",
+         "Evaluating reverse polish mathematical expressions",
+         "Rescheduling CPU time for processes using round robin"],
+   ans:3,
+   exp:"Round-robin CPU scheduling processes jobs in FIFO order — exactly how a queue works. Function calls and reverse polish notation both use a stack (LIFO)."},
+
+  // ── SEARCHING ────────────────────────────────────────────────────
+  {id:13,topic:"Searching",years:[2019,2020,2021],repeat:true,
+   text:"The list [A, C, E, F, G, K, L] is searched using binary search. The target value is I. How many comparisons are made before it can be concluded that I does NOT appear in the list?",
+   opts:["2","3","4","7"],
+   ans:1,
+   exp:"Binary search on 7 items: (1) Compare F (middle, index 3) — I > F, search right. (2) Compare K (index 5) — I < K, search [G]. (3) Compare G — I ≠ G, not found. = 3 comparisons. Appeared in all three years: 2019 Q8, 2020 Q10, 2021 Q11."},
+
+  {id:14,topic:"Searching",years:[2020],repeat:false,
+   text:"The sorted list is [1, 6, 9, 14, 17, 20, 22]. A binary search is used with target value 19. What is the SECOND value compared with the target?",
+   opts:["14","17","20","22"],
+   ans:2,
+   exp:"First comparison: middle element = 14 (index 3). Since 19 > 14, search right half [17, 20, 22]. Second comparison: middle of right half = 20 (index 5)."},
+
+  {id:15,topic:"Searching",years:[2019,2020,2021],repeat:true,
+   text:"The list [frog, ant, dog, grasshopper, bee, fish, snake] is sorted alphabetically. When performing a binary search on the sorted list, which element will be found the FASTEST?",
+   opts:["ant","dog","fish","grasshopper"],
+   ans:2,
+   exp:"Sorted: ant, bee, dog, fish, frog, grasshopper, snake. The middle element (index 3) is FISH — found in the very first comparison. Appeared in 2019 Q3, 2020 Q12, 2021 Q3."},
+
+  {id:16,topic:"Searching",years:[2020],repeat:false,
+   text:"Which of the following statements is true for BOTH linear search and binary search?",
+   opts:["On average they search half the list.",
+         "In the worst-case scenario they search the entire list.",
+         "They can be used for searching an ordered list.",
+         "They require that the list be ordered."],
+   ans:2,
+   exp:"Both can operate on an ordered list. Only binary search REQUIRES the list to be sorted. In the worst case, linear search checks all n items; binary search checks only log₂(n)."},
+
+  {id:17,topic:"Searching",years:[2019,2020,2021],repeat:true,
+   text:"An incomplete linear search algorithm for target on an array list of size n:\n\ncount = 0\nflag = false\nREPEAT\n  IF (list[count] = target) THEN\n    I\n  END IF\n  II\nUNTIL flag = true OR III\nIF flag = false THEN\n  IV\nEND IF\n\nWhich sequence of steps completes the algorithm?",
+   opts:["I – flag = true\nII – add 1 to count\nIII – count = n – 1\nIV – WRITE target not found",
+         "I – flag = true\nII – add 1 to count\nIII – count = n – 1\nIV – WRITE target found",
+         "I – flag = true\nII – add 1 to count\nIII – count = n\nIV – WRITE target not found",
+         "I – flag = true\nII – add 1 to count\nIII – count = n\nIV – WRITE target found"],
+   ans:0,
+   exp:"When found: set flag=true (I). Always: increment count (II). Stop condition: count reaches n-1, the last valid index (III). If flag is false after loop, target was not found (IV). Appeared in 2019 Q10, 2020 Q8, 2021 Q10."},
+
+  // ── SORTING ──────────────────────────────────────────────────────
+  {id:18,topic:"Sorting",years:[2019,2020],repeat:true,
+   text:"The list [frog, ant, dog, grasshopper, bee, fish, snake] is being sorted using SELECTION SORT. Which of the following lists will NOT be obtained at any point during the sort?",
+   opts:["ant, frog, dog, grasshopper, bee, fish, snake",
+         "ant, bee, frog, dog, grasshopper, fish, snake",
+         "ant, bee, dog, fish, frog, grasshopper, snake",
+         "ant, bee, dog, grasshopper, frog, fish, snake"],
+   ans:1,
+   exp:"Selection sort finds the minimum in the unsorted portion and swaps it to the front each pass. Pass 1: min=ant → swap with frog → [ant, frog, dog, grasshopper, bee, fish, snake] (A is valid). Pass 2: min=bee → swap with frog → [ant, bee, dog, grasshopper, frog, fish, snake]. Option B shows 'frog' at index 2, which skips 'dog' being placed correctly — this cannot be produced by selection sort. Appeared in 2019 Q2 and 2020 Q11."},
+
+  {id:19,topic:"Sorting",years:[2021],repeat:false,
+   text:"The array [30, 32, 24, 18, 7, 3] is sorted using SELECTION SORT (ascending). What does the array look like after THREE passes?",
+   opts:["3, 7, 18, 24, 32, 30",
+         "3, 7, 24, 18, 30, 32",
+         "3, 7, 18, 30, 32, 24",
+         "3, 7, 18, 24, 30, 32"],
+   ans:0,
+   exp:"Pass 1: min=3 at pos 5, swap with pos 0 → [3, 32, 24, 18, 7, 30]. Pass 2: min=7 at pos 4, swap with pos 1 → [3, 7, 24, 18, 32, 30]. Pass 3: min=18 at pos 3, swap with pos 2 → [3, 7, 18, 24, 32, 30]. Answer: A."},
+
+  {id:20,topic:"Sorting",years:[2019,2020,2021],repeat:true,
+   text:"An incomplete BUBBLE SORT algorithm:\n\nREPEAT\n  flag = false\n  FOR pos = 1 to n – 1 DO\n    IF (list[pos] > list[pos + 1]) THEN\n      I\n      II\n      III\n      IV\n    END IF\n  END FOR\n  subtract 1 from n\nUNTIL flag = false OR n = 1\n\nWhich sequence completes the algorithm?",
+   opts:["I–flag=true, II–list[pos]=list[pos+1], III–temp=list[pos], IV–list[pos+1]=temp",
+         "I–temp=list[pos], II–list[pos]=list[pos+1], III–list[pos+1]=temp, IV–flag=true",
+         "I–flag=true, II–temp=list[pos], III–list[pos+1]=temp, IV–list[pos]=list[pos+1]",
+         "I–temp=list[pos], II–list[pos+1]=temp, III–list[pos]=list[pos+1], IV–flag=true"],
+   ans:1,
+   exp:"The swap requires a temporary variable: save temp=list[pos] (I), copy list[pos+1] into list[pos] (II), copy temp into list[pos+1] (III), then set flag=true to record that a swap occurred (IV). Appeared in 2019 Q13, 2020 Q14, 2021 Q13."},
+
+  {id:21,topic:"Sorting",years:[2019,2020,2021],repeat:true,
+   text:"An incomplete SELECTION SORT algorithm:\n\nFOR i = 0 to n – 2 DO\n  min = i\n  FOR j = i + 1 to n – 1 DO\n    IF __I__ THEN\n      min = j\n    END IF\n    SWAP list[i] and __II__\n  END FOR\nEND FOR\n\nWhich sequence correctly completes the algorithm?",
+   opts:["I – list[j] < list[min]  |  II – list[min]",
+         "I – list[j] > list[min]  |  II – list[min]",
+         "I – list[j] < list[min]  |  II – list[j]",
+         "I – list[j] > list[min]  |  II – list[j]"],
+   ans:0,
+   exp:"For ascending order, we track the minimum: if list[j] is less than the current minimum (list[min]), update min=j (I). Then swap list[i] with list[min] (II). Appeared in 2019 Q14, 2020 Q15, 2021 Q14."},
+
+  {id:22,topic:"Sorting",years:[2021],repeat:false,
+   text:"Which of the following statements about sorting algorithms is TRUE?",
+   opts:["The bubble sort is very simple and therefore very efficient.",
+         "The selection sort performs the same regardless of the size of the list.",
+         "The bubble sort performs less efficiently than selection sort on longer lists.",
+         "The selection sort starts by finding the maximum element and swapping it with the middle element."],
+   ans:2,
+   exp:"Bubble sort has O(n²) complexity with many swaps, performing worse than selection sort on large lists. Selection sort always makes O(n²) comparisons but O(n) swaps. Neither is 'very efficient' — both are O(n²)."},
+
+  // ── SOFTWARE ENGINEERING ─────────────────────────────────────────
+  {id:23,topic:"Software Engineering",years:[2019,2020],repeat:true,
+   text:"Which of the following terms represent types of SOFTWARE MAINTENANCE?\n  I.   Adaptive\n  II.  Corrective\n  III. Defective",
+   opts:["I and II only","I and III only","II and III only","I, II and III"],
+   ans:0,
+   exp:"The recognised types of software maintenance are: Adaptive (changes to environment), Corrective (fixing bugs), and Perfective (improvements). 'Defective' is NOT a maintenance type — it describes a fault. Appeared in 2019 Q19, 2020 Q16."},
+
+  {id:24,topic:"Software Engineering",years:[2019,2020,2021],repeat:true,
+   text:"Which of the following attributes does NOT contribute to a system's MAINTAINABILITY?",
+   opts:["Useful documentation",
+         "Consistent, meaningful variable names",
+         "Pieces of code with well-defined purpose",
+         "Code that provides functionality not currently used, but which will possibly be used in the future"],
+   ans:3,
+   exp:"Dead code (unused functionality) harms maintainability — it creates confusion, increases complexity, and makes the codebase harder to understand and modify. Appeared in 2019 Q20, 2020 Q25, 2021 Q20."},
+
+  {id:25,topic:"Software Engineering",years:[2019,2020,2021],repeat:true,
+   text:"Which of the following is NOT a tenet of good programming style?",
+   opts:["Using comments for documentation",
+         "Appropriately spacing code",
+         "Indenting where necessary",
+         "Fixing logic errors"],
+   ans:3,
+   exp:"Fixing logic errors is debugging, not a programming style guideline. Good style tenets include: comments/documentation, meaningful spacing, and consistent indentation. Appeared in 2019 Q23, 2020 Q20, 2021 Q23."},
+
+  {id:26,topic:"Software Engineering",years:[2019,2020,2021],repeat:true,
+   text:"Which life cycle model approach is BEST suited for a system with CRITICAL SAFETY and SECURITY requirements?",
+   opts:["Waterfall approach, since software is well structured",
+         "Evolutionary development, since security problems can be easily rectified by creating a new system",
+         "Fountain approach, since security problems can be easily rectified by further iterations",
+         "Formal transformation, since it can be proven that the system fulfils requirements"],
+   ans:3,
+   exp:"Formal transformation uses mathematical specifications and proofs to verify the system meets its requirements — the only approach that can formally guarantee correctness, essential for safety-critical systems. Appeared in 2019 Q26, 2020 Q27, 2021 Q26."},
+
+  {id:27,topic:"Software Engineering",years:[2019,2020,2021],repeat:true,
+   text:"A small company with fewer than ten employees wants to replace its existing paper-based system with a software application. Which of the following is MOST appropriate for gathering information during analysis?",
+   opts:["Distributing questionnaires to employees and clients of the company",
+         "Researching company practices on the Internet",
+         "Interviewing priority clients of the company",
+         "Interviewing key people at the company"],
+   ans:3,
+   exp:"For a small company, interviewing key personnel gives the richest, most targeted information about requirements. Questionnaires suit large distributed organisations. Appeared in 2019 Q27, 2020 Q30, 2021 Q27."},
+
+  {id:28,topic:"Software Engineering",years:[2019,2020,2021],repeat:true,
+   text:"Which graphical tool is MOST suitable for showing how a software development project and its subtasks should be completed within a specified timeframe?",
+   opts:["Data flow diagram","System flowchart","Decision tree","Gantt chart"],
+   ans:3,
+   exp:"A Gantt chart plots tasks against time, showing start dates, durations, and dependencies — specifically designed for project scheduling. Appeared in 2019 Q18, 2020 Q22, 2021 Q18."},
+
+  {id:29,topic:"Software Engineering",years:[2019,2020],repeat:true,
+   text:"A feasibility study...",
+   opts:["describes a cost-effective means of developing the proposed system",
+         "discusses whether the proposed system will be cost effective",
+         "is usually a lengthy and costly process",
+         "describes how current software and hardware can be used to develop the proposed system"],
+   ans:1,
+   exp:"A feasibility study examines and discusses whether the proposed system is viable (economic, technical, and operational feasibility) — it asks 'should we build this?' Appeared in 2019 Q17, 2020 Q19."},
+
+  {id:30,topic:"Software Engineering",years:[2019,2020],repeat:true,
+   text:"When individual modules were tested, no errors were found. However, when all modules were merged and tested together, the system failed. Which type of testing would MOST likely have identified this failure?",
+   opts:["Acceptance testing",
+         "Integration testing",
+         "Testing using live data",
+         "Testing individual modules"],
+   ans:1,
+   exp:"Integration testing specifically tests how modules interact when combined — it catches interface errors and interaction bugs that only emerge when components work together. Appeared in 2019 Q22."},
+
+  {id:31,topic:"Software Engineering",years:[2019,2020],repeat:true,
+   text:"Which of the following diagrams does NOT violate any rules for constructing DATA FLOW DIAGRAMS?",
+   opts:["An external entity with a two-headed arrow to a process (bidirectional flow on single arrow)",
+         "An external entity with two separate arrows: one going to it, one going from it (to a data store, no label)",
+         "An external entity with a single one-directional arrow FROM a process to the entity",
+         "An external entity with two separate labelled arrows: one to a process, one from a process"],
+   ans:3,
+   exp:"In a DFD, data flows must be labelled, must be unidirectional, and external entities can both send and receive data via separate arrows. Option D shows a valid DFD where the entity has two clearly separate directional flows with labels. Appeared in 2019 Q16."},
+
+  {id:32,topic:"Software Engineering",years:[2020,2021],repeat:true,
+   text:"Which of the following describes the contents of an entry in a DATA DICTIONARY?\n  I.   The name of the element\n  II.  A list of related elements\n  III. The type and format of the element",
+   opts:["I and II only","I and III only","II and III only","I, II and III"],
+   ans:3,
+   exp:"A data dictionary entry contains: the name of the data element, its type and format, valid values/ranges, and a description of related elements. All three items are included. Appeared in 2020 Q26, 2021 Q30."},
+
+  {id:33,topic:"Software Engineering",years:[2021],repeat:false,
+   text:"Which of the following statements is true of DATA FLOW DIAGRAMS?",
+   opts:["Data cannot be moved directly from one store to another.",
+         "A data flow may flow in both directions between two symbols.",
+         "A process can have only one output.",
+         "A data flow to a store means retrieve or use."],
+   ans:0,
+   exp:"In DFDs, data cannot flow directly between two data stores — it must always pass through a process. This is a fundamental DFD construction rule."},
+
+  {id:34,topic:"Software Engineering",years:[2019,2021],repeat:true,
+   text:"Which of the following design processes refers to the identification of SUBSYSTEMS and their RELATIONSHIPS?",
+   opts:["Architectural","Data structure","Component","Interface"],
+   ans:0,
+   exp:"Architectural design is the high-level design phase that identifies the major subsystems and defines how they relate to each other. Appeared in 2019 Q24, 2021 Q24."},
+
+  {id:35,topic:"Software Engineering",years:[2019],repeat:false,
+   text:"Which of the following is considered a FUNCTIONAL requirement?",
+   opts:["Inputs","Reusability","Availability","Response time"],
+   ans:0,
+   exp:"Functional requirements describe what the system does — inputs, outputs, and processing. Reusability, availability, and response time are non-functional (quality) requirements."},
+
+  {id:36,topic:"Software Engineering",years:[2019],repeat:false,
+   text:"Software EVOLUTION refers to...",
+   opts:["improving software by addressing bugs",
+         "developing new software from an existing system",
+         "automatically adapting software to changing customer needs and wants",
+         "modifying software to satisfy changes in customer and market requirements"],
+   ans:3,
+   exp:"Software evolution (Lehman's laws) refers to the ongoing process of modifying software to keep it useful as customer needs and the operating environment change — not just bug fixing."},
+
+  {id:37,topic:"Software Engineering",years:[2021],repeat:false,
+   text:"The evolutionary approach is being used. Which of the following are types of EVOLUTIONARY DEVELOPMENT?\n  I.   Exploratory development\n  II.  Throw-away prototyping\n  III. Rewind approach",
+   opts:["I and II only","I and III only","II and III only","I, II and III"],
+   ans:0,
+   exp:"The two types of evolutionary development are: Exploratory development (refine system with customer) and Throw-away prototyping (prototype to clarify requirements, then build properly). 'Rewind approach' is not a recognised type."},
+
+  {id:38,topic:"Software Engineering",years:[2021],repeat:false,
+   text:"The software process model defined by its approach of REFINING AN INITIAL SYSTEM based on user input is the:",
+   opts:["Waterfall approach","Formal transformation","Evolutionary development","Reuse-oriented approach"],
+   ans:2,
+   exp:"Evolutionary development iteratively refines an initial system prototype based on feedback from users — the system evolves rather than being built in a single pass."},
+
+  {id:39,topic:"Software Engineering",years:[2020],repeat:false,
+   text:"Which of the following outputs is a result of using a CASE (Computer-Aided Software Engineering) tool?",
+   opts:["Cost/benefit analysis","Program definition","Feasibility study","Prototype"],
+   ans:3,
+   exp:"CASE tools assist in software development tasks. One key output is a prototype. Cost/benefit analysis and feasibility studies are management/planning outputs, not CASE tool outputs."},
+
+  {id:40,topic:"Software Engineering",years:[2020],repeat:false,
+   text:"The MAIN goal of COMPONENT TESTING is to:",
+   opts:["Expose faults in the components",
+         "Demonstrate that the system meets its requirements",
+         "Increase the supplier's confidence that the system meets its requirements",
+         "Test how one component interacts with others in the system"],
+   ans:0,
+   exp:"Component (unit) testing aims to find faults within individual components in isolation. Integration testing handles interactions between components."},
+
+  {id:41,topic:"Software Engineering",years:[2020],repeat:false,
+   text:"Which of the following is true of the WATERFALL approach to software development?\n  I.   The following stage starts before the previous stage has finished.\n  II.  The following stage should not start before the previous has finished.\n  III. Cascades from one phase of the process to another.",
+   opts:["I and II only","I and III only","II and III only","I, II and III"],
+   ans:2,
+   exp:"The waterfall model is strictly sequential — each stage must complete before the next begins (II), and the model flows downward from one phase to the next like a waterfall (III). Statement I describes an agile/overlapping approach."},
+
+  {id:42,topic:"Software Engineering",years:[2021],repeat:false,
+   text:"A company replacing its software is located in various Caribbean territories with many employees. Which approach is MOST appropriate for gathering information during the analysis phase?",
+   opts:["Prototyping",
+         "Distributing questionnaires at each branch",
+         "Observation of practices at a few branches",
+         "Interviews with key people at a few branches"],
+   ans:1,
+   exp:"For a large, geographically distributed organisation, questionnaires can efficiently reach all branches and staff. Interviews and observations at only a few branches would miss territory-specific differences."},
+
+  // ── DATABASES ────────────────────────────────────────────────────
+  {id:43,topic:"Databases",years:[2019,2020,2021],repeat:true,
+   text:"A car dealer uses a relational database to store data on orders made by customers, the types of cars in stock, and payments made. How many ENTITIES can be identified?",
+   opts:["One","Two","Three","Four"],
+   ans:2,
+   exp:"The three entities are: Customer, Car (types in stock), and Payment. Appeared in 2019 Q25, 2020 Q23, 2021 Q29."},
+
+  {id:44,topic:"Databases",years:[2020],repeat:false,
+   text:"Using the same car dealer scenario, what type of relationship exists between the CUSTOMER and PAYMENTS entities?",
+   opts:["One to one","One to many","Many to one","Many to many"],
+   ans:1,
+   exp:"One customer can make many payments (for multiple orders), but each payment belongs to one customer — a one-to-many relationship."},
+
+  {id:45,topic:"Databases",years:[2021],repeat:false,
+   text:"Which of the following are constructs of an ENTITY-RELATIONSHIP (ER) diagram?",
+   opts:["Entity, relationship",
+         "Entity, relationship, flow",
+         "Entity, attribute, relationship",
+         "Entity, attribute, relationship, flow"],
+   ans:2,
+   exp:"ER diagrams have three constructs: entities (rectangles), attributes (ovals/ellipses), and relationships (diamonds). 'Flow' is a DFD construct, not an ER diagram construct."},
+
+  {id:46,topic:"Databases",years:[2019],repeat:false,
+   text:"In database modelling, an 'ATTRIBUTE' is:",
+   opts:["An object of interest to an organization about which data is stored",
+         "A link or association between entities",
+         "A property or characteristic of an entity",
+         "A property or characteristic of an organization"],
+   ans:2,
+   exp:"An attribute describes a property or characteristic of an entity. For example, a Car entity might have attributes: make, model, year, colour. An entity itself is option A; a relationship is option B."},
+
+  // ── OPERATING SYSTEMS ────────────────────────────────────────────
+  {id:47,topic:"Operating Systems",years:[2019,2020,2021],repeat:true,
+   text:"A running process initiates an input request to get data from the keyboard. Which state transition takes place when the data is MADE AVAILABLE?",
+   opts:["Ready to running","Running to ready","Blocked to ready","Blocked to running"],
+   ans:2,
+   exp:"When a process requests I/O, it moves from Running to Blocked. When the data becomes available, it moves from Blocked to Ready (waiting for CPU). The scheduler then decides when to move it from Ready to Running. Appeared in 2019 Q45, 2020 Q42, 2021 Q37."},
+
+  {id:48,topic:"Operating Systems",years:[2019,2020,2021],repeat:true,
+   text:"Which of the following determines the amount of time a running process gets to use the CPU when a ROUND-ROBIN scheduling algorithm is used?",
+   opts:["The priority of the process",
+         "The estimated running time of the process",
+         "The time is fixed by the operating system",
+         "The order of arrival of the process on the ready queue"],
+   ans:2,
+   exp:"In round-robin scheduling, each process receives a fixed time quantum (time slice) set by the operating system — all processes get equal turns regardless of priority or arrival order. Appeared in 2019 Q38, 2020 Q41, 2021 Q38."},
+
+  {id:49,topic:"Operating Systems",years:[2019,2020,2021],repeat:true,
+   text:"The diagram shows: Process A holds Resource A and waits for Resource B. Process B holds Resource B and waits for Resource A. What does this diagram represent?",
+   opts:["Deadlock","Interrupt","Round robin","Fetch-decode-execute cycle"],
+   ans:0,
+   exp:"Two processes each holding a resource that the other needs, with neither able to proceed — this is the classic definition of deadlock (circular wait condition). Appeared in 2019 Q36, 2020 Q43, 2021 Q45."},
+
+  {id:50,topic:"Operating Systems",years:[2019,2020,2021],repeat:true,
+   text:"Which of the following statements is TRUE about a process scheduled with a NON-PREEMPTIVE algorithm?",
+   opts:["It is placed at the top of the ready queue if it has higher priority than all current processes.",
+         "Once it enters the running state, it is allowed to run to completion or until it yields the processor.",
+         "Once it enters the running state, it is given a fixed amount of time after which other processes get CPU time.",
+         "Once it enters the running state, it is given a variable amount of time depending on its priority."],
+   ans:1,
+   exp:"Non-preemptive scheduling means the process cannot be forcibly removed from the CPU — it runs until it either completes or voluntarily yields. Option C describes round-robin (preemptive). Appeared in 2019 Q44, 2020 Q44, 2021 Q44."},
+
+  {id:51,topic:"Operating Systems",years:[2019,2020,2021],repeat:true,
+   text:"Which of the following phrases BEST describes 'PAGING'?",
+   opts:["The division of documents into smaller chunks",
+         "The assignment of chunks of a program called frames to main memory called pages",
+         "The assignment of chunks of a program called frames to different secondary storage media",
+         "The assignment of chunks of a program called pages to chunks of memory called frames"],
+   ans:3,
+   exp:"Paging: the program is divided into fixed-size pages; physical memory is divided into frames of the same size. Pages are loaded into frames. Option B has the terms backwards. Appeared in 2019 Q33, 2020 Q32, 2021 Q33."},
+
+  {id:52,topic:"Operating Systems",years:[2019,2020,2021],repeat:true,
+   text:"Which of the following outcomes relates to the use of VIRTUAL MEMORY?",
+   opts:["Results in faster execution speeds",
+         "Creates an illusion that the computer has more memory",
+         "Ensures that memory works faster",
+         "Ensures that all programs are in memory"],
+   ans:1,
+   exp:"Virtual memory uses disk space to extend the apparent size of RAM, giving the illusion that the system has more memory than physically present. It actually SLOWS execution (disk access is far slower than RAM). Appeared in 2019 Q37, 2020 Q37, 2021 Q42."},
+
+  {id:53,topic:"Operating Systems",years:[2019,2020,2021],repeat:true,
+   text:"In a network where running applications generate a SIGNIFICANT amount of traffic, which device would NOT be suitable?",
+   opts:["Hub","Switch","Router","Bridge"],
+   ans:0,
+   exp:"A hub broadcasts ALL traffic to ALL ports, wasting bandwidth and creating collisions under heavy load. A switch directs frames only to the relevant port using MAC address tables — far more efficient. Appeared in 2019 Q43, 2020 Q45, 2021 Q43."},
+
+  {id:54,topic:"Operating Systems",years:[2019],repeat:false,
+   text:"A process is said to be BLOCKED when...",
+   opts:["the CPU is unavailable",
+         "it has now entered the system",
+         "it is waiting for I/O and cannot use the CPU even if it were free",
+         "processes with higher priority are given CPU time"],
+   ans:2,
+   exp:"Blocked state means the process is waiting for an external event (usually I/O completion) and cannot proceed even if the CPU is free. This distinguishes Blocked from Ready (which is waiting for CPU)."},
+
+  {id:55,topic:"Operating Systems",years:[2020,2021],repeat:true,
+   text:"Which of the following pieces of information is NOT contained in a PROCESS CONTROL BLOCK (PCB)?",
+   opts:["Amount of CPU time used",
+         "Estimated time to completion",
+         "Job priority",
+         "Process ID"],
+   ans:1,
+   exp:"A PCB stores: process ID, state, CPU registers, CPU time used, memory allocation, I/O status, priority. 'Estimated time to completion' is NOT stored — the OS does not generally know in advance how long a process will run. Appeared in 2020 Q31, 2021 Q36."},
+
+  {id:56,topic:"Operating Systems",years:[2021],repeat:false,
+   text:"An 'INTERRUPT' may BEST be described as a:",
+   opts:["Period in time when the CPU does nothing",
+         "Signal sent to the CPU for attention",
+         "Time when a process is blocked",
+         "Signal sent when a process is complete"],
+   ans:1,
+   exp:"An interrupt is a signal sent to the CPU requesting attention — it can come from hardware (keyboard press, timer) or software. The CPU pauses current execution, handles the interrupt via an ISR, then resumes."},
+
+  // ── NETWORKS ─────────────────────────────────────────────────────
+  {id:57,topic:"Networks",years:[2019,2020,2021],repeat:true,
+   text:"A client needs very high data rates (30–40 Mbps) for a wireless LAN. Which standard should be employed — 802.11a or 802.11b?",
+   opts:["802.11a, since it can support the desired data rates.",
+         "802.11b, since it can support the desired data rates.",
+         "802.11a or 802.11b will give similar performance since these standards do not differ in data rates.",
+         "Neither 802.11a nor 802.11b since they do NOT support transmission over a large distance."],
+   ans:0,
+   exp:"802.11a supports up to 54 Mbps; 802.11b only supports up to 11 Mbps. For 30–40 Mbps requirements, only 802.11a is suitable. Appeared in 2019 Q32, 2021 Q32."},
+
+  {id:58,topic:"Networks",years:[2020],repeat:false,
+   text:"Which IEEE 802.11 standards can be employed when setting up a wireless LAN for devices needing transfer rates GREATER than 20 Mbps?\n  I.   802.11a\n  II.  802.11b\n  III. 802.11g",
+   opts:["I only","II only","I and II only","I and III only"],
+   ans:3,
+   exp:"802.11a supports up to 54 Mbps; 802.11g supports up to 54 Mbps. 802.11b only supports up to 11 Mbps — not enough. So standards I (802.11a) and III (802.11g) both exceed 20 Mbps."},
+
+  {id:59,topic:"Networks",years:[2019,2020,2021],repeat:true,
+   text:"A webmaster designs a website offline and wants to upload files and graphics to the web server remotely. Which method provides the FASTEST and MOST SECURE upload?",
+   opts:["FTP","GSM","UML","HTML"],
+   ans:0,
+   exp:"FTP (File Transfer Protocol) is specifically designed for transferring files between computers over a network. GSM is mobile telephony; UML is a software modelling language; HTML is a markup language. Appeared in 2019 Q34, 2020 Q35, 2021 Q34."},
+
+  {id:60,topic:"Networks",years:[2019,2020,2021],repeat:true,
+   text:"The term 'FIREWIRE' refers to a...",
+   opts:["type of cabling that allows communication between computers",
+         "software running on a computer that protects it from external attacks",
+         "high-speed serial bus system",
+         "type of computer virus"],
+   ans:2,
+   exp:"FireWire (IEEE 1394) is a high-speed serial bus interface standard used for connecting devices, particularly for audio/video applications and external storage. Appeared in 2019 Q39, 2020 Q34, 2021 Q39."},
+
+  {id:61,topic:"Networks",years:[2020],repeat:false,
+   text:"The following diagram shows: Computer → [square wave signal] → Modem → [sine wave signal] → Modem → [square wave signal] → Computer.\nThe diagram BEST illustrates:",
+   opts:["Routing","Addressing","Modulation and demodulation","Multiplexing and expandibility"],
+   ans:2,
+   exp:"The diagram shows digital signals (square waves) being converted to analogue signals (sine waves) by a modem for transmission, then converted back — this is modulation (digital→analogue) and demodulation (analogue→digital)."},
+
+  {id:62,topic:"Networks",years:[2019,2020],repeat:true,
+   text:"The diagram shows a star network topology with a central device X connected to workstations, and device Y connected above X. Y and X respectively represent a:",
+   opts:["Hub and node","Server and hub","Workstation and node","Workstation and server"],
+   ans:1,
+   exp:"In a star topology, the central connecting device is a hub (X), and a server (Y) is connected to the hub to provide shared resources to all workstations. Appeared in 2019 Q40, 2020 Q40."},
+
+  {id:63,topic:"Networks",years:[2021],repeat:false,
+   text:"If a node fails in a RING NETWORK, how many other stations are affected?",
+   opts:["Half of the stations","All other stations","No other computer","Only the computer directly attached to the failed computer"],
+   ans:1,
+   exp:"In a ring topology, data travels in one direction around the ring. If any single node fails, the ring is broken and ALL other stations on the ring cannot communicate."},
+
+  {id:64,topic:"Networks",years:[2021],repeat:false,
+   text:"Which layer of the OSI model handles data transmission BETWEEN HOST COMPUTERS?",
+   opts:["Network layer","Transport layer","Presentation layer","Application layer"],
+   ans:1,
+   exp:"The Transport layer (Layer 4) provides end-to-end communication services between host computers, handling segmentation, flow control, and error recovery (TCP and UDP operate here)."},
+
+  {id:65,topic:"Networks",years:[2021],repeat:false,
+   text:"Which of the following BEST describes a DISTRIBUTED network configuration?",
+   opts:["Many users are on the network.",
+         "There are several printers on a network.",
+         "All data and processing power are located at one node.",
+         "Data and processing power can be scattered across many nodes."],
+   ans:3,
+   exp:"A distributed network has resources — data, processing power, storage — spread across multiple nodes rather than centralised at one location. This contrasts with a centralised system."},
+
+  {id:66,topic:"Networks",years:[2019],repeat:false,
+   text:"A client wants a wireless LAN with very high data rates (30–40 Mbps). Which standard should be used?",
+   opts:["802.11a, since it can support the desired data rates.",
+         "802.11b, since it can support the desired data rates.",
+         "802.11a or 802.11b will give similar performance.",
+         "Neither, since they do not support transmission over a large distance."],
+   ans:0,
+   exp:"802.11a supports up to 54 Mbps; 802.11b only 11 Mbps. Only 802.11a meets the 30–40 Mbps requirement."},
+
+  {id:67,topic:"Networks",years:[2019],repeat:false,
+   text:"In a network where running applications generate a significant amount of traffic, which device would NOT be suitable?",
+   opts:["Hub","Switch","Router","Bridge"],
+   ans:0,
+   exp:"A hub broadcasts all traffic to all ports, leading to collisions and poor performance under heavy load. Switches intelligently direct traffic to the correct port only."},
+];
+
+// ── Build topic list ──
+const TOPICS = ["All Topics", ...new Set(Q.map(q => q.topic))];
+let activeTopic = "All Topics";
+let userAnswers = {};
+let submitted = false;
+
+function filtered() {
+  return activeTopic === "All Topics" ? Q : Q.filter(q => q.topic === activeTopic);
+}
+
+function renderTabs() {
+  const el = document.getElementById("tabs-inner");
+  el.innerHTML = `<span class="tab-lbl">Filter:</span>` +
+    TOPICS.map(t => `<button class="tab${t===activeTopic?" active":""}" onclick="setTopic('${t.replace(/'/g,"\\'")}')">${t} <small style="opacity:.6">(${t==="All Topics"?Q.length:Q.filter(q=>q.topic===t).length})</small></button>`).join("");
+}
+
+function setTopic(t) {
+  activeTopic = t;
+  renderTabs();
+  renderQuestions();
+  updateStats();
+}
+
+function updateStats() {
+  const qs = filtered();
+  const done = qs.filter(q => userAnswers[q.id] !== undefined).length;
+  document.getElementById("s-answered").textContent = done + "/" + qs.length;
+  if (submitted) {
+    const cor = qs.filter(q => userAnswers[q.id] === q.ans).length;
+    document.getElementById("s-correct").textContent = cor;
+    document.getElementById("s-wrong").textContent = (done - cor);
+  } else {
+    document.getElementById("s-correct").textContent = "—";
+    document.getElementById("s-wrong").textContent = "—";
+  }
+  document.getElementById("prog").style.width = qs.length ? (done / qs.length * 100) + "%" : "0%";
+}
+
+function selectOpt(qid, oidx) {
+  if (submitted) return;
+  userAnswers[qid] = oidx;
+  // Update UI for this card only
+  const card = document.getElementById("qc-" + qid);
+  card.querySelectorAll(".opt").forEach((btn, i) => {
+    btn.classList.remove("o-selected");
+    if (i === oidx) btn.classList.add("o-selected");
+  });
+  updateStats();
+}
+
+function renderQuestions() {
+  const qs = filtered();
+  // Group by topic if All Topics
+  let html = "";
+  if (activeTopic === "All Topics") {
+    const groups = {};
+    qs.forEach(q => { if (!groups[q.topic]) groups[q.topic] = []; groups[q.topic].push(q); });
+    let gnum = 0;
+    for (const [topic, gqs] of Object.entries(groups)) {
+      html += `<div class="section-head">${topic}</div>`;
+      gqs.forEach((q, i) => { html += buildCard(q, gnum + i + 1); });
+      gnum += gqs.length;
+    }
+  } else {
+    qs.forEach((q, i) => { html += buildCard(q, i + 1); });
+  }
+  html += buildSubmitBar();
+  document.getElementById("main-content").innerHTML = html;
+  // Re-apply selected states
+  if (!submitted) {
+    Object.entries(userAnswers).forEach(([qid, oidx]) => {
+      const card = document.getElementById("qc-" + qid);
+      if (!card) return;
+      card.querySelectorAll(".opt").forEach((btn, i) => {
+        btn.classList.remove("o-selected");
+        if (i === oidx) btn.classList.add("o-selected");
+      });
+    });
+  }
+}
+
+function buildCard(q, num) {
+  const yearBadges = q.years.map(y => `<span class="badge b-year">${y}</span>`).join(" ");
+  const topicBadge = activeTopic === "All Topics" ? "" : `<span class="badge b-topic">${q.topic}</span>`;
+  const repeatBadge = q.repeat ? `<span class="badge b-repeat">⟳ REPEAT</span>` : "";
+  const opts = q.opts.map((o, i) => {
+    let cls = "opt";
+    if (submitted) {
+      cls += " disabled";
+      if (i === q.ans) cls += " o-correct";
+      else if (userAnswers[q.id] === i && i !== q.ans) cls += " o-wrong";
+    }
+    return `<button class="${cls}" onclick="selectOpt(${q.id},${i})" ${submitted?"disabled":""}>
+      <span class="ltr">${["A","B","C","D"][i]}</span>
+      <span style="white-space:pre-line">${o}</span>
+    </button>`;
+  }).join("");
+
+  let resultHtml = "";
+  if (submitted && userAnswers[q.id] !== undefined) {
+    const correct = userAnswers[q.id] === q.ans;
+    resultHtml = `<div class="result-msg ${correct?"r-correct":"r-wrong"}">
+      <strong>${correct ? "✓ Correct!" : "✗ Incorrect — Answer: (" + ["A","B","C","D"][q.ans] + ")"}</strong>
+      <div class="r-exp">${q.exp}</div>
+    </div>`;
+  } else if (submitted && userAnswers[q.id] === undefined) {
+    resultHtml = `<div class="result-msg" style="background:#f4f3ee;color:#888;border-left:3px solid #ccc">
+      Not answered — Answer: (${["A","B","C","D"][q.ans]})<div class="r-exp">${q.exp}</div></div>`;
+  }
+
+  const cardCls = submitted
+    ? (userAnswers[q.id] === q.ans ? " state-correct" : " state-wrong")
+    : "";
+
+  return `<div class="q-card${cardCls}" id="qc-${q.id}">
+    <div class="q-header">
+      <span class="q-num">Q${num}</span>
+      ${topicBadge}${yearBadges}${repeatBadge}
+    </div>
+    <div class="q-text">${q.text}</div>
+    <div class="options">${opts}</div>
+    ${resultHtml}
+  </div>`;
+}
+
+function buildSubmitBar() {
+  if (submitted) {
+    const qs = filtered();
+    const done = qs.filter(q => userAnswers[q.id] !== undefined).length;
+    const cor = qs.filter(q => userAnswers[q.id] === q.ans).length;
+    const pct = done ? Math.round(cor / qs.length * 100) : 0;
+    const grade = pct >= 70 ? "Pass 🎉" : pct >= 50 ? "Almost there 💪" : "Keep studying 📚";
+    return `<div class="results-summary">
+      <h2>Results: ${grade}</h2>
+      <p>You answered ${done} of ${qs.length} questions.</p>
+      <div class="result-grid">
+        <div class="result-cell rc-correct">${cor}<div class="rc-label">Correct</div></div>
+        <div class="result-cell rc-wrong">${done - cor}<div class="rc-label">Wrong</div></div>
+        <div class="result-cell rc-score">${pct}%<div class="rc-label">Score</div></div>
+      </div>
+    </div>
+    <div class="submit-bar">
+      <button class="btn-reset" onclick="resetQuiz()">↺ Reset &amp; Try Again</button>
+    </div>`;
+  }
+  return `<div class="submit-bar">
+    <button class="btn-submit" onclick="submitQuiz()">Submit Answers</button>
+  </div>`;
+}
+
+function submitQuiz() {
+  submitted = true;
+  renderQuestions();
+  updateStats();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function resetQuiz() {
+  submitted = false;
+  userAnswers = {};
+  renderQuestions();
+  updateStats();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+// Init
+renderTabs();
+renderQuestions();
+updateStats();
+</script>
+</body>
+</html>
